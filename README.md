@@ -1,4 +1,4 @@
-# Demo — Recocido Simulado (Simulated Annealing)
+# Demo: Recocido Simulado (Simulated Annealing)
 
 Demo visual interactiva para la Actividad 1 de **MII902 Optimización Estocástica**.
 
@@ -25,8 +25,8 @@ y abrir <http://localhost:8000>.
 
 ## Correspondencia con el pseudocódigo del curso (Pasos 0–6)
 
-- **Paso 0**: `Reiniciar` — x⁰ aleatorio, T = T₀, t ← 0, x* ← x⁰.
-- **Pasos 2–3**: `js/annealing.js` — movimiento provisorio Δx en ±paso y
+- **Paso 0**: `Reiniciar` genera x⁰ aleatorio, T = T₀, t ← 0, x* ← x⁰.
+- **Pasos 2–3**: `js/annealing.js` implementa el movimiento provisorio Δx en ±paso y
   criterio de aceptación `p = e^(Δ/T)`, comparado contra `r`. Un rechazo **vuelve al Paso 2**:
   no avanza t (el HUD separa *iteración t* de *propuestas*).
 - **Paso 4**: x* es el punto blanco ("mejor").
@@ -48,10 +48,10 @@ Fijo en el código (`js/main.js`, objeto `params`): **tamaño de paso = 5 %**
 del dominio como radio del vecindario M.
 
 Barra inferior izquierda: **Play/Pausa**, **Reiniciar** (mismo terreno),
-**velocidad 1× / 5× / 10× / 100×** (1× = 5 propuestas/s; toda corrida nueva
+**velocidad 1× / 5× / 10× / 100×** (1× = 3 propuestas/s; toda corrida nueva
 parte en 1× para seguir el paso a paso con calma), **Nuevo terreno** y
 **Recalentar** (nueva corrida con x⁰ = posición actual y t ← 0, conservando
-x* — útil para mostrar escape de un óptimo local). La velocidad es solo ritmo
+x*, útil para mostrar escape de un óptimo local). La velocidad es solo ritmo
 visual: no cambia la matemática.
 
 Teclado: `espacio` iniciar/pausar · `R` reiniciar · `N` nuevo terreno ·
@@ -60,9 +60,9 @@ Teclado: `espacio` iniciar/pausar · `R` reiniciar · `N` nuevo terreno ·
 ## Qué mirar durante la presentación
 
 - **Tag xᵗ sobre la pelota**: la solución actual (dice x⁰ antes de partir).
-- **Anillos verdes**: candidato *aceptado* — la pelota se mueve ahí, sea mejor
+- **Anillos verdes**: candidato *aceptado*: la pelota se mueve ahí, sea mejor
   o peor (si era peor, fue por el criterio de Metropolis).
-- **Círculos rojos**: candidato *rechazado* — la pelota no se movió.
+- **Círculos rojos**: candidato *rechazado*: la pelota no se movió.
 - **Punto x⁰**: dónde partió la corrida (Recalentar lo reubica).
 - **HUD izquierdo**: fórmula de Boltzmann `p = e^(Δz/q)` y número aleatorio
   `r` de la última propuesta peor; el gráfico va arriba a la derecha.
