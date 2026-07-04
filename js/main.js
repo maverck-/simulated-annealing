@@ -536,7 +536,7 @@ function conectarControles() {
     params.t0 = v;
     if (modo === 'listo') T = v; // antes de iniciar, T sigue a T₀
   });
-  enlazar('in-alfa', 'out-alfa', (v) => v.toFixed(4), (v) => { params.alfa = v; });
+  enlazar('in-alfa', 'out-alfa', (v) => v.toFixed(2), (v) => { params.alfa = v; });
   enlazar('in-nivel', 'out-nivel', (v) => String(v), (v) => { params.nivelL = v; });
   enlazar('in-tmax', 'out-tmax', (v) => String(v), (v) => { params.tMax = v; });
 

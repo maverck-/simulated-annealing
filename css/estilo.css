@@ -347,6 +347,12 @@ body {
   text-transform: none;
 }
 
+.control-simbolo-valor {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;

@@ -81,14 +81,15 @@
 
     <div class="control">
       <label for="in-alfa">Enfriamiento <span class="tag">α</span>
-        <output class="mono" id="out-alfa">0.9500</output>
+        <output class="mono" id="out-alfa">0.95</output>
       </label>
-      <input type="range" id="in-alfa" min="0.9" max="0.9995" step="0.0005" value="0.95" />
+      <input type="range" id="in-alfa" min="0.9" max="0.99" step="0.01" value="0.95" />
     </div>
 
     <div class="control">
-      <label for="in-nivel">Meseta <span class="tag">L</span>
-        <output class="mono" id="out-nivel">10</output>
+      <label for="in-nivel">Meseta
+        <span class="control-simbolo-valor"><span class="tag">L</span>
+          <output class="mono" id="out-nivel">10</output></span>
       </label>
       <input type="range" id="in-nivel" min="1" max="50" step="1" value="10" />
     </div>
