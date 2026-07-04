@@ -292,9 +292,11 @@ function dibujarSilueta(f, W, H, base, escala, fill) {
 }
 
 function dibujar(dt) {
-  // En pausa (o detenido) las estelas se congelan: quedan en pantalla
-  // para apoyar la explicación y retoman su desvanecimiento al continuar.
-  const dtFx = modo === 'ejecucion' ? dt : 0;
+  // En pausa las estelas se congelan para apoyar la explicación; al
+  // terminar la corrida se desvanecen lento en vez de quedar fijas.
+  const dtFx = modo === 'ejecucion' ? dt
+    : modo === 'detenido' ? dt * 0.25
+    : 0;
   const { W, H } = tamano();
   const h = calor();
 
@@ -555,6 +557,24 @@ function conectarControles() {
   dom.play.addEventListener('click', alternar);
   dom.vel.addEventListener('click', cicloVelocidad);
 
+  // Panel de simbología junto al botón de info: se cierra al hacer clic
+  // fuera, con Escape, o con el mismo botón
+  const btnInfo = $('btn-info');
+  const simbolos = $('simbolos');
+  const fijarSimbolos = (abierto) => {
+    simbolos.classList.toggle('oculto', !abierto);
+    btnInfo.setAttribute('aria-expanded', String(abierto));
+  };
+  btnInfo.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fijarSimbolos(simbolos.classList.contains('oculto'));
+  });
+  document.addEventListener('click', (e) => {
+    if (!simbolos.classList.contains('oculto') && !simbolos.contains(e.target)) {
+      fijarSimbolos(false);
+    }
+  });
+
   $('btn-reiniciar').addEventListener('click', () => reiniciar());
   $('btn-terreno').addEventListener('click', () => reiniciar({ nuevoTerreno: true }));
   // Recalentar = nueva corrida con x⁰ = posición actual, conservando x*
@@ -569,6 +589,7 @@ function conectarControles() {
 
   window.addEventListener('keydown', (e) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLButtonElement) return;
+    if (e.key === 'Escape') fijarSimbolos(false);
     if (e.code === 'Space') { e.preventDefault(); alternar(); }
     if (e.key === 'r' || e.key === 'R') reiniciar();
     if (e.key === 'n' || e.key === 'N') reiniciar({ nuevoTerreno: true });

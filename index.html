@@ -29,6 +29,27 @@
     <button id="btn-recalentar" class="btn-redondo btn-sec" title="Recalentar: T vuelve a T₀" aria-label="Recalentar">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2s-6 5.7-6 10.2A6 6 0 0 0 18 12.2C18 7.7 12 2 12 2zm0 14.5a3 3 0 0 1-3-3c0-1.6 1.3-3.4 3-5.2 1.7 1.8 3 3.6 3 5.2a3 3 0 0 1-3 3z"/></svg>
     </button>
+    <span class="info-wrap">
+    <button id="btn-info" class="btn-redondo btn-sec" title="Simbología" aria-expanded="false" aria-controls="simbolos">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+    </button>
+    <section class="simbolos oculto" id="simbolos" aria-label="Simbología">
+      <p class="etiqueta">Simbología</p>
+      <ul>
+        <li><span class="tag">z</span><span>Función objetivo: la altura del terreno, se busca su máximo</span></li>
+        <li><span class="tag">x⁰</span><span>Solución inicial de la corrida</span></li>
+        <li><span class="tag">xᵗ</span><span>Solución actual en la iteración t (la esfera)</span></li>
+        <li><span class="tag">x*</span><span>Mejor solución encontrada: el récord</span></li>
+        <li><span class="tag tag-formula">Δz = z(x<sup>t+1</sup>) − z(x<sup>t</sup>)</span><span>Cambio en z al pasar al vecino: mejora o empeora</span></li>
+        <li><span class="tag">t, t<sub>máx</sub></span><span>Movimientos aceptados y su límite (parada)</span></li>
+        <li><span class="tag">q</span><span>Temperatura: alta explora, baja precisa</span></li>
+        <li><span class="tag">α</span><span>Enfriamiento: q se multiplica por α cada meseta</span></li>
+        <li><span class="tag">L</span><span>Meseta: aceptados por nivel de q antes de enfriar</span></li>
+        <li><span class="tag">r</span><span>Número aleatorio en [0, 1): sortea la aceptación</span></li>
+        <li><span class="tag">p = e<sup>Δz/q</sup></span><span>Probabilidad de aceptar un vecino peor: acepta si r &lt; p</span></li>
+      </ul>
+    </section>
+    </span>
   </nav>
 
   <header class="titulo-caja">
@@ -113,7 +134,10 @@
     </div>
   </aside>
 
-  <p class="credito">MII-902 Optimización Estocástica</p>
+  <a class="credito" href="https://github.com/maverck-/simulated-annealing" target="_blank" rel="noopener">
+    <svg class="credito-icono" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628a2.25 2.25 0 0 1-1.5-2.122Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"/></svg>
+    Por Maverick Gayoso
+  </a>
 
   <script type="module" src="js/main.js"></script>
 </body>
