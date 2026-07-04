@@ -76,8 +76,6 @@ const grafico = $('grafico');
 const gtx = grafico.getContext('2d');
 
 const dom = {
-  tValor: $('t-valor'), gauge: $('gauge-fill'),
-  iter: $('d-iter'),
   formula: $('formula-texto'),
   play: $('btn-play'), iconoPlay: $('icono-play'), iconoPausa: $('icono-pausa'),
   vel: $('btn-vel'),
@@ -478,10 +476,6 @@ function dibujarGrafico() {
 // ————— HUD —————
 
 function actualizarHUD() {
-  dom.tValor.textContent = T.toFixed(4);
-  dom.gauge.style.transform = `scaleX(${clamp01(T / params.t0)})`;
-  dom.iter.textContent = `${iter}/${params.tMax}`;
-
   if (ultimaPeor) {
     const u = ultimaPeor;
     const comparador = u.aceptado ? '&lt;' : '&gt;';
