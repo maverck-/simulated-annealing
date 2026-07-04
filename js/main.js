@@ -490,6 +490,7 @@ function actualizarHUD() {
       : '<span class="veredicto veredicto-no">Rechaza</span>';
     dom.formula.innerHTML =
       `<span class="formula-expresion">
+        <span class="tag tag-formula">p = e<sup>Δz/q</sup></span>
         <span class="formula-termino">p = ${u.p.toFixed(3)}</span>
         <span class="formula-termino">r = ${u.r.toFixed(3)}</span>
         <span class="formula-termino formula-comparacion">r ${comparador} p</span>
