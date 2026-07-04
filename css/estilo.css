@@ -235,6 +235,8 @@ body {
 
 .tag sub, .tag sup { font-size: 9.5px; }
 
+.tag-formula { white-space: nowrap; }
+
 .formula { display: grid; gap: 6px; }
 
 .formula p {
