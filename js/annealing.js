@@ -7,6 +7,7 @@
  * Paso 3 — Criterio de aceptación (Metropolis):
  *   - Si Δ ≥ 0 (mejora)  → se acepta siempre.
  *   - Si Δ < 0 (empeora) → se acepta con probabilidad p = e^(Δ/T)
+ *     comparando un número aleatorio r ∈ [0,1) contra p.
  *     (distribución de Boltzmann; T es el parámetro de control q).
  */
 
@@ -20,15 +21,17 @@ export function pasoRecocido(actual, f, T, paso, rng = Math.random) {
 
   let aceptado;
   let p = 1;
+  let rAceptacion = null;
 
   if (delta >= 0) {
     aceptado = true;
   } else {
     p = Math.exp(delta / Math.max(T, 1e-12));
-    aceptado = rng() < p;
+    rAceptacion = rng();
+    aceptado = rAceptacion < p;
   }
 
-  return { x, altura, delta, p, aceptado, empeora: delta < 0 };
+  return { x, altura, delta, p, r: rAceptacion, aceptado, empeora: delta < 0 };
 }
 
 /** Paso 5 — Reducción de temperatura geométrica: T ← α · T

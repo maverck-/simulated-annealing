@@ -27,7 +27,7 @@ y abrir <http://localhost:8000>.
 
 - **Paso 0**: `Reiniciar` — x⁰ aleatorio, T = T₀, t ← 0, x* ← x⁰.
 - **Pasos 2–3**: `js/annealing.js` — movimiento provisorio Δx en ±paso y
-  criterio de aceptación p = e^(Δ/T). Un rechazo **vuelve al Paso 2**:
+  criterio de aceptación `p = e^(Δ/T)`, comparado contra `r`. Un rechazo **vuelve al Paso 2**:
   no avanza t (el HUD separa *iteración t* de *propuestas*).
 - **Paso 4**: x* es el punto blanco ("mejor").
 - **Paso 5**: T baja cada **L** movimientos aceptados (enfriamiento por mesetas).
@@ -64,8 +64,8 @@ Teclado: `espacio` iniciar/pausar · `R` reiniciar · `N` nuevo terreno ·
   o peor (si era peor, fue por el criterio de Metropolis).
 - **Círculos rojos**: candidato *rechazado* — la pelota no se movió.
 - **Punto x⁰**: dónde partió la corrida (Recalentar lo reubica).
-- **HUD izquierdo**: fórmula de Boltzmann `p = e^(Δz/q)` con los valores de la
-  última propuesta peor; el gráfico va arriba a la derecha.
+- **HUD izquierdo**: fórmula de Boltzmann `p = e^(Δz/q)` y número aleatorio
+  `r` de la última propuesta peor; el gráfico va arriba a la derecha.
 - **Tags en escena**: `Óptimo Global` sobre la cima más alta y `x*` sobre el
   mejor estado encontrado. Al terminar, comparar ambos.
 

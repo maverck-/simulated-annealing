@@ -149,21 +149,21 @@ function cicloVelocidad() {
 /** Una pasada por los Pasos 2–6. Devuelve al bucle cuando hay rechazo
     (volver al Paso 2 = la siguiente llamada). */
 function iterar() {
-  const r = pasoRecocido(actual, terreno.f, T, params.paso); // Pasos 2–3
+  const propuesta = pasoRecocido(actual, terreno.f, T, params.paso); // Pasos 2–3
   propuestas += 1;
 
-  if (r.empeora) ultimaPeor = { ...r, T };
+  if (propuesta.empeora) ultimaPeor = { ...propuesta, T };
 
-  if (r.aceptado) {
+  if (propuesta.aceptado) {
     iter += 1; // Paso 6: t avanza solo con movimiento aceptado
     rechazosSeguidos = 0;
     if (!reduceMotion && fantasmas.length < 20) {
       fantasmas.push({ x: actual.x, altura: actual.altura, edad: 0 }); // base que deja atrás
     }
-    actual = { x: r.x, altura: r.altura };
+    actual = { x: propuesta.x, altura: propuesta.altura };
     if (!reduceMotion) {
-      if (pulsos.length < 60) pulsos.push({ x: r.x, edad: 0, delta: r.delta });
-      if (rastro.length < 160) rastro.push({ x: r.x, edad: 0 });
+      if (pulsos.length < 60) pulsos.push({ x: propuesta.x, edad: 0, delta: propuesta.delta });
+      if (rastro.length < 160) rastro.push({ x: propuesta.x, edad: 0 });
     }
     // Paso 4: actualización de la mejor solución x*
     if (actual.altura > mejor.altura) mejor = { ...actual, iter };
@@ -181,7 +181,7 @@ function iterar() {
   } else {
     rechazosSeguidos += 1;
     if (!reduceMotion && rechazos.length < 40) {
-      rechazos.push({ x: r.x, altura: r.altura, edad: 0, delta: r.delta });
+      rechazos.push({ x: propuesta.x, altura: propuesta.altura, edad: 0, delta: propuesta.delta });
     }
     // Paso 1: sin movimientos aceptables en el vecindario → óptimo local
     if (rechazosSeguidos >= RECHAZOS_MAX) detener('óptimo local');
@@ -486,11 +486,12 @@ function actualizarHUD() {
 
   if (ultimaPeor) {
     const u = ultimaPeor;
+    const comparador = u.aceptado ? '<' : '>';
     const veredicto = u.aceptado
       ? '<span class="veredicto veredicto-si">Acepta</span>'
       : '<span class="veredicto veredicto-no">Rechaza</span>';
     dom.formula.innerHTML =
-      `p = e<sup>Δz/q</sup> = ${u.p.toFixed(3)} ${veredicto}`;
+      `p = e<sup>Δz/q</sup> = ${u.p.toFixed(3)} · r = ${u.r.toFixed(3)} ${comparador} p ${veredicto}`;
   }
 }
 
