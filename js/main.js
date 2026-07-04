@@ -39,6 +39,9 @@ const params = { t0: 1, alfa: 0.95, nivelL: 10, tMax: 1000, paso: 0.05 };
 // el botón de la barra multiplica la base.
 const VEL_BASE = 3; // propuestas/s a 1×
 const MULTIPLICADORES = [1, 5, 10, 100];
+const DURACION_FANTASMA = 1.15;
+const DURACION_RECHAZO = 0.95;
+const DURACION_PULSO = 0.9;
 let velIndice = 0;
 
 let terreno, fondo;            // función objetivo y silueta decorativa
@@ -268,7 +271,7 @@ function dibujarDelta(delta, cx, cy, alfa, aceptado) {
   ctx.font = FUENTE_VALOR_CHICO;
   ctx.textAlign = 'center';
   const c = aceptado ? '159,214,138' : '224,122,106';
-  ctx.fillStyle = `rgba(${c},${Math.min(0.95, alfa * 1.8)})`;
+  ctx.fillStyle = `rgba(${c},${Math.min(0.98, alfa * 2.1)})`;
   const signo = delta >= 0 ? '+' : '';
   ctx.fillText(`Δz = ${signo}${delta.toFixed(3)}`, cx, cy);
 }
@@ -364,42 +367,42 @@ function dibujar(dt) {
   // Fantasma de la base anterior: silueta sutil donde estaba xᵗ
   for (const p of fantasmas) {
     p.edad += dt;
-    const a = Math.max(0, 0.28 - p.edad * 0.35);
+    const a = Math.max(0, 0.36 * (1 - p.edad / DURACION_FANTASMA));
     if (a <= 0) continue;
     ctx.fillStyle = color('nucleo', h, a);
     ctx.beginPath();
     ctx.arc(p.x * W, yDe(p.altura) - radio, radio, 0, Math.PI * 2);
     ctx.fill();
   }
-  fantasmas = fantasmas.filter((p) => p.edad < 0.8);
+  fantasmas = fantasmas.filter((p) => p.edad < DURACION_FANTASMA);
 
   // Candidato rechazado: círculo rojo que se desvanece
   for (const p of rechazos) {
     p.edad += dt;
-    const a = Math.max(0, 0.55 - p.edad * 1.4);
+    const a = Math.max(0, 0.68 * (1 - p.edad / DURACION_RECHAZO));
     if (a <= 0) continue;
     ctx.strokeStyle = `rgba(224,122,106,${a})`;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.75;
     ctx.beginPath();
     ctx.arc(p.x * W, yDe(p.altura) - radio, radio, 0, Math.PI * 2);
     ctx.stroke();
     dibujarDelta(p.delta, p.x * W, yDe(p.altura) + 22, a, false);
   }
-  rechazos = rechazos.filter((p) => p.edad < 0.4);
+  rechazos = rechazos.filter((p) => p.edad < DURACION_RECHAZO);
 
   // Candidato aceptado: anillo verde que se expande
   for (const p of pulsos) {
     p.edad += dt;
-    const a = Math.max(0, 0.7 - p.edad * 1.2);
+    const a = Math.max(0, 0.72 * (1 - p.edad / DURACION_PULSO));
     if (a <= 0) continue;
     ctx.strokeStyle = `rgba(159,214,138,${a})`;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(p.x * W, yDe(terreno.f(p.x)) - radio, radio * (1 + p.edad * 4), 0, Math.PI * 2);
+    ctx.arc(p.x * W, yDe(terreno.f(p.x)) - radio, radio * (1 + p.edad * 3.4), 0, Math.PI * 2);
     ctx.stroke();
     dibujarDelta(p.delta, p.x * W, yDe(terreno.f(p.x)) + 22, a, true);
   }
-  pulsos = pulsos.filter((p) => p.edad < 0.6);
+  pulsos = pulsos.filter((p) => p.edad < DURACION_PULSO);
 
   // x⁰: punto de partida de la corrida, siempre bajo la superficie
   if (inicio) {
