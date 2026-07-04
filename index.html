@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recocido simulado — MII902</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23ff9c3f'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/estilo.css" />
+</head>
+<body>
+  <canvas id="escena" aria-label="Simulación de recocido simulado: una esfera incandescente busca la cima más alta de un terreno montañoso"></canvas>
+
+  <nav class="transporte" aria-label="Controles de reproducción">
+    <button id="btn-play" class="btn-redondo btn-play" title="Iniciar / pausar (espacio)" aria-label="Iniciar o pausar">
+      <svg id="icono-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="icono-pausa" class="oculto" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+    </button>
+    <button id="btn-reiniciar" class="btn-redondo" title="Reiniciar (R)" aria-label="Reiniciar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+    </button>
+    <button id="btn-vel" class="btn-vel mono" title="Velocidad de reproducción (V)" aria-label="Cambiar velocidad">1×</button>
+    <span class="separador" role="presentation"></span>
+    <button id="btn-terreno" class="btn-redondo btn-sec" title="Nuevo terreno (N)" aria-label="Nuevo terreno">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-3.7 4.9 2.8 3.7-1.6 1.2L8 11 2 19h20L14 6z"/></svg>
+    </button>
+    <button id="btn-recalentar" class="btn-redondo btn-sec" title="Recalentar: T vuelve a T₀" aria-label="Recalentar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2s-6 5.7-6 10.2A6 6 0 0 0 18 12.2C18 7.7 12 2 12 2zm0 14.5a3 3 0 0 1-3-3c0-1.6 1.3-3.4 3-5.2 1.7 1.8 3 3.6 3 5.2a3 3 0 0 1-3 3z"/></svg>
+    </button>
+  </nav>
+
+  <header class="titulo-caja">
+    <h1>Simulated Annealing</h1>
+  </header>
+
+  <section class="hud" aria-label="Estado de la simulación">
+    <div class="hud-temp">
+      <div class="hud-temp-cab">
+        <div class="hud-bloque">
+          <span class="etiqueta">Iteración <span class="tag">t</span></span>
+          <span class="mono grande blanco" id="d-iter">0/1000</span>
+        </div>
+        <div class="hud-bloque hud-bloque-der">
+          <span class="etiqueta">Temperatura <span class="tag">q</span></span>
+          <span class="mono grande" id="t-valor">1.0000</span>
+        </div>
+      </div>
+      <div class="gauge" role="presentation"><div class="gauge-fill" id="gauge-fill"></div></div>
+    </div>
+
+    <dl class="hud-grid">
+      <div><dt>Altura <span class="tag">f(x<sup>t</sup>)</span></dt><dd class="mono" id="d-altura">—</dd></div>
+      <div><dt>Mejor <span class="tag">x*</span></dt><dd class="mono" id="d-mejor">—</dd></div>
+    </dl>
+
+    <div class="formula">
+      <span class="etiqueta">Evaluación probabilística <span class="tag">Δz ≤ 0</span></span>
+      <p class="mono" id="formula-texto">p = e<sup>Δz/q</sup> — aún sin candidatos peores</p>
+    </div>
+
+  </section>
+
+  <section class="grafica-caja" aria-label="Evolución de la búsqueda">
+    <canvas id="grafico" height="64" aria-label="Gráfico de altura y temperatura por iteración"></canvas>
+    <p class="leyenda">
+      <span class="clave clave-altura">altura</span>
+      <span class="clave clave-mejor">mejor</span>
+      <span class="clave clave-temp">temperatura</span>
+    </p>
+  </section>
+
+  <aside class="panel" aria-label="Parámetros del algoritmo">
+    <div class="control">
+      <label for="in-t0">Temperatura inicial <span class="tag">q</span>
+        <output class="mono" id="out-t0">1.00</output>
+      </label>
+      <input type="range" id="in-t0" min="0.05" max="5" step="0.05" value="1" />
+    </div>
+
+    <div class="control">
+      <label for="in-alfa">Enfriamiento <span class="tag">α</span>
+        <output class="mono" id="out-alfa">0.9500</output>
+      </label>
+      <input type="range" id="in-alfa" min="0.9" max="0.9995" step="0.0005" value="0.95" />
+    </div>
+
+    <div class="control">
+      <label for="in-nivel">Meseta <span class="tag">L</span>
+        <output class="mono" id="out-nivel">10</output>
+      </label>
+      <input type="range" id="in-nivel" min="1" max="50" step="1" value="10" />
+    </div>
+
+    <div class="control">
+      <label for="in-tmax">Iteraciones <span class="tag">t<sub>máx</sub></span>
+        <output class="mono" id="out-tmax">1000</output>
+      </label>
+      <input type="range" id="in-tmax" min="200" max="10000" step="100" value="1000" />
+    </div>
+  </aside>
+
+  <p class="credito">MII-902 Optimización Estocástica</p>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+/* ————— Recocido simulado · MII902 —————
+   La escena (canvas) es termocrómica: la pinta main.js según T.
+   La interfaz flota encima con un tono de hierro forjado constante. */
+
+:root {
+  --tinta: #f2e9dd;
+  --tinta-suave: #b3a48f;
+  --tinta-tenue: #8a7c69;
+  --hierro: rgba(17, 13, 10, 0.78);
+  --borde: rgba(242, 233, 221, 0.12);
+  --brasa: #ff9c3f;
+  --brasa-viva: #ffc46b;
+  --acero: #8fb4e3;
+  --exito: #9fd68a;
+  --radio: 14px;
+  --fuente: "Geist", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--fuente);
+  color: var(--tinta);
+  background: #1a0d06;
+  overflow: hidden;
+}
+
+#escena {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+/* ————— Barra de transporte ————— */
+
+.transporte {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-redondo, .btn-vel {
+  background: var(--hierro);
+  border: 1px solid var(--borde);
+  color: var(--tinta);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease;
+}
+
+.btn-redondo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.btn-redondo svg {
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
+}
+
+.oculto { display: none; }
+
+.btn-redondo:hover, .btn-vel:hover { background: rgba(60, 48, 38, 0.85); }
+.btn-redondo:active { transform: scale(0.94); }
+
+.btn-play {
+  width: 66px;
+  height: 66px;
+  background: var(--brasa);
+  border-color: transparent;
+  color: #241104;
+}
+
+.btn-play:hover { background: var(--brasa-viva); }
+.btn-play svg { width: 28px; height: 28px; }
+
+.btn-vel {
+  height: 54px;
+  min-width: 76px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--brasa-viva);
+}
+
+.btn-sec {
+  width: 47px;
+  height: 47px;
+  color: var(--tinta-suave);
+}
+
+.btn-sec svg { width: 20px; height: 20px; }
+
+.separador {
+  width: 1px;
+  height: 26px;
+  background: var(--borde);
+  margin: 0 2px;
+}
+
+.btn-redondo:focus-visible, .btn-vel:focus-visible {
+  outline: 2px solid var(--brasa);
+  outline-offset: 2px;
+}
+
+.titulo-caja {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 30px;
+}
+
+.titulo-caja h1 {
+  font-family: var(--fuente);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--tinta);
+  white-space: nowrap;
+}
+
+/* ————— Tarjetas flotantes ————— */
+
+.hud, .panel, .grafica-caja, .titulo-caja {
+  position: fixed;
+  background: var(--hierro);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.grafica-caja {
+  top: 20px;
+  right: 20px;
+  width: min(360px, calc(100vw - 40px));
+  padding: 16px 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.hud {
+  top: 20px;
+  left: 20px;
+  width: min(370px, calc(100vw - 40px));
+  padding: 18px 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.panel {
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 420px); /* deja libre la barra de transporte */
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.etiqueta, .panel h2, .hud-grid dt {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+}
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.grande { font-size: 27px; color: var(--brasa-viva); }
+
+/* ————— HUD ————— */
+
+.hud-temp { display: grid; gap: 8px; }
+
+.hud-temp-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.hud-bloque { display: grid; gap: 6px; }
+
+.hud-bloque-der { text-align: right; }
+
+.blanco { color: var(--tinta); }
+
+.gauge {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(242, 233, 221, 0.08);
+  overflow: hidden;
+}
+
+.gauge-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #4a6a95, #ff9c3f, #ffd27a);
+  transform-origin: left center;
+  transition: transform 120ms linear;
+}
+
+.hud-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+.hud-grid div { display: grid; gap: 5px; }
+.hud-grid dd { font-size: 18px; }
+
+/* Tags de símbolos, como los de las láminas del curso */
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: rgba(242, 233, 221, 0.12);
+  border: 1px solid rgba(242, 233, 221, 0.08);
+  color: var(--tinta);
+  text-transform: none;
+  vertical-align: middle;
+}
+
+.tag sub, .tag sup { font-size: 9.5px; }
+
+.formula { display: grid; gap: 6px; }
+
+.formula p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--tinta-suave);
+  min-height: 1.6em;
+}
+
+/* Veredicto tipo tag, como en la presentación */
+.veredicto {
+  display: inline-block;
+  font-family: var(--fuente);
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 11px;
+  border-radius: 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.veredicto-si { background: rgba(159, 214, 138, 0.16); color: var(--exito); }
+.veredicto-no { background: rgba(224, 122, 106, 0.15); color: #e88d7e; }
+
+#grafico {
+  width: 100%;
+  height: 64px;
+  display: block;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.leyenda {
+  display: flex;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--tinta-tenue);
+}
+
+.clave::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  vertical-align: middle;
+  margin-right: 5px;
+  border-radius: 1px;
+}
+
+.clave-altura::before { background: var(--brasa); }
+.clave-mejor::before  { background: rgba(242, 233, 221, 0.7); }
+.clave-temp::before   { background: var(--acero); }
+
+/* ————— Panel de parámetros ————— */
+
+.control {
+  display: grid;
+  gap: 8px;
+  flex: 0 1 250px;
+  min-width: 170px;
+}
+
+/* Línea divisoria sutil entre controles: no toca los bordes del recuadro */
+.control + .control {
+  position: relative;
+  margin-left: 26px;
+  padding-left: 26px;
+}
+
+.control + .control::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 75%;
+  background: var(--borde);
+}
+
+/* Etiquetas de slider con el mismo estilo que las del HUD */
+.control label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.control abbr { text-decoration: none; }
+
+.control output {
+  font-size: 16px;
+  color: var(--brasa-viva);
+  text-transform: none;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(242, 233, 221, 0.15);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 19px;
+  height: 19px;
+  margin-top: -7.5px;
+  border-radius: 50%;
+  background: var(--brasa);
+  border: 2px solid #1a120b;
+  box-shadow: 0 0 8px rgba(255, 156, 63, 0.5);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(242, 233, 221, 0.15);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--brasa);
+  border: 2px solid #1a120b;
+  box-shadow: 0 0 8px rgba(255, 156, 63, 0.5);
+}
+
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--brasa);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ————— Crédito ————— */
+
+.credito {
+  position: fixed;
+  right: 28px;
+  bottom: 26px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: rgba(242, 233, 221, 0.32);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+/* ————— Pantallas angostas ————— */
+
+@media (max-width: 900px) {
+  body { overflow-y: auto; }
+
+  .hud, .panel, .grafica-caja, .titulo-caja {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 12px;
+    transform: none;
+  }
+
+  .panel { flex-wrap: wrap; gap: 16px; }
+
+  .control { flex: 1 1 200px; }
+
+  .control + .control {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .control + .control::before { display: none; }
+
+  .credito { display: none; }
+
+  #escena {
+    position: static;
+    width: 100vw;
+    height: 52vh;
+  }
+
+  .transporte {
+    position: static;
+    padding: 14px 16px 0;
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-fill { transition: none; }
+}
