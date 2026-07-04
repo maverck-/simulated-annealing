@@ -486,12 +486,17 @@ function actualizarHUD() {
 
   if (ultimaPeor) {
     const u = ultimaPeor;
-    const comparador = u.aceptado ? '<' : '>';
+    const comparador = u.aceptado ? '&lt;' : '&gt;';
     const veredicto = u.aceptado
       ? '<span class="veredicto veredicto-si">Acepta</span>'
       : '<span class="veredicto veredicto-no">Rechaza</span>';
     dom.formula.innerHTML =
-      `p = e<sup>Δz/q</sup> = ${u.p.toFixed(3)} · r = ${u.r.toFixed(3)} ${comparador} p ${veredicto}`;
+      `<span class="formula-expresion">
+        <span class="formula-termino">p = ${u.p.toFixed(3)}</span>
+        <span class="formula-termino">r = ${u.r.toFixed(3)}</span>
+        <span class="formula-termino formula-comparacion">r ${comparador} p</span>
+      </span>
+      ${veredicto}`;
   }
 }
 
