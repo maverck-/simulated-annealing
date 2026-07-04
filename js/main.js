@@ -78,7 +78,7 @@ const gtx = grafico.getContext('2d');
 const dom = {
   tValor: $('t-valor'), gauge: $('gauge-fill'),
   iter: $('d-iter'),
-  formula: $('formula-texto'),
+  evalP: $('eval-p'), evalR: $('eval-r'), evalVeredicto: $('eval-veredicto'),
   play: $('btn-play'), iconoPlay: $('icono-play'), iconoPausa: $('icono-pausa'),
   vel: $('btn-vel'),
 };
@@ -115,7 +115,8 @@ function calor() {
 function reiniciar({ nuevoTerreno = false } = {}) {
   if (nuevoTerreno || !terreno) {
     terreno = crearTerreno();
-    fondo = crearTerreno({ f3: 2 });
+    // la cordillera decorativa se dibuja baja: no necesita protección
+    fondo = crearTerreno({ f3: 2, protegerInterfaz: false });
   }
   // Paso 0: x⁰ aleatorio, T = T₀, t ← 0, x* ← x⁰
   T = params.t0;
@@ -291,6 +292,9 @@ function dibujarSilueta(f, W, H, base, escala, fill) {
 }
 
 function dibujar(dt) {
+  // En pausa (o detenido) las estelas se congelan: quedan en pantalla
+  // para apoyar la explicación y retoman su desvanecimiento al continuar.
+  const dtFx = modo === 'ejecucion' ? dt : 0;
   const { W, H } = tamano();
   const h = calor();
 
@@ -354,7 +358,7 @@ function dibujar(dt) {
 
   // Huellas de estados aceptados
   for (const p of rastro) {
-    p.edad += dt;
+    p.edad += dtFx;
     const a = Math.max(0, 0.35 - p.edad * 0.12);
     if (a <= 0) continue;
     ctx.fillStyle = color('halo', h, a);
@@ -366,7 +370,7 @@ function dibujar(dt) {
 
   // Fantasma de la base anterior: silueta sutil donde estaba xᵗ
   for (const p of fantasmas) {
-    p.edad += dt;
+    p.edad += dtFx;
     const a = Math.max(0, 0.36 * (1 - p.edad / DURACION_FANTASMA));
     if (a <= 0) continue;
     ctx.fillStyle = color('nucleo', h, a);
@@ -378,7 +382,7 @@ function dibujar(dt) {
 
   // Candidato rechazado: círculo rojo que se desvanece
   for (const p of rechazos) {
-    p.edad += dt;
+    p.edad += dtFx;
     const a = Math.max(0, 0.68 * (1 - p.edad / DURACION_RECHAZO));
     if (a <= 0) continue;
     ctx.strokeStyle = `rgba(224,122,106,${a})`;
@@ -392,7 +396,7 @@ function dibujar(dt) {
 
   // Candidato aceptado: anillo verde que se expande
   for (const p of pulsos) {
-    p.edad += dt;
+    p.edad += dtFx;
     const a = Math.max(0, 0.72 * (1 - p.edad / DURACION_PULSO));
     if (a <= 0) continue;
     ctx.strokeStyle = `rgba(159,214,138,${a})`;
@@ -484,18 +488,10 @@ function actualizarHUD() {
 
   if (ultimaPeor) {
     const u = ultimaPeor;
-    const comparador = u.aceptado ? '&lt;' : '&gt;';
-    const veredicto = u.aceptado
-      ? '<span class="veredicto veredicto-si">Acepta</span>'
-      : '<span class="veredicto veredicto-no">Rechaza</span>';
-    dom.formula.innerHTML =
-      `<span class="formula-expresion">
-        <span class="tag tag-formula">p = e<sup>Δz/q</sup></span>
-        <span class="formula-termino">p = ${u.p.toFixed(3)}</span>
-        <span class="formula-termino">r = ${u.r.toFixed(3)}</span>
-        <span class="formula-termino formula-comparacion">r ${comparador} p</span>
-      </span>
-      ${veredicto}`;
+    dom.evalP.textContent = u.p.toFixed(3);
+    dom.evalR.textContent = u.r.toFixed(3);
+    dom.evalVeredicto.textContent = u.aceptado ? 'Acepta' : 'Rechaza';
+    dom.evalVeredicto.className = `veredicto ${u.aceptado ? 'veredicto-si' : 'veredicto-no'}`;
   }
 }
 
@@ -527,12 +523,23 @@ function cuadro(ahora) {
 
 // ————— Controles —————
 
+function actualizarProgresoSlider(input) {
+  const min = parseFloat(input.min || '0');
+  const max = parseFloat(input.max || '100');
+  const valor = parseFloat(input.value || '0');
+  const porcentaje = max === min ? 0 : ((valor - min) / (max - min)) * 100;
+  const acotado = Math.min(100, Math.max(0, porcentaje));
+  input.style.setProperty('--range-progreso', `${acotado}%`);
+}
+
 function conectarControles() {
   const enlazar = (id, salida, formato, aplicar) => {
     const input = $(id), out = $(salida);
+    actualizarProgresoSlider(input);
     input.addEventListener('input', () => {
       const v = parseFloat(input.value);
       out.textContent = formato(v);
+      actualizarProgresoSlider(input);
       aplicar(v);
     });
   };

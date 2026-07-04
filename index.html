@@ -18,10 +18,10 @@
       <svg id="icono-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
       <svg id="icono-pausa" class="oculto" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
     </button>
+    <button id="btn-vel" class="btn-vel mono" title="Velocidad de reproducción (V)" aria-label="Cambiar velocidad">1×</button>
     <button id="btn-reiniciar" class="btn-redondo" title="Reiniciar (R)" aria-label="Reiniciar">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
     </button>
-    <button id="btn-vel" class="btn-vel mono" title="Velocidad de reproducción (V)" aria-label="Cambiar velocidad">1×</button>
     <span class="separador" role="presentation"></span>
     <button id="btn-terreno" class="btn-redondo btn-sec" title="Nuevo terreno (N)" aria-label="Nuevo terreno">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-3.7 4.9 2.8 3.7-1.6 1.2L8 11 2 19h20L14 6z"/></svg>
@@ -52,14 +52,20 @@
 
     <div class="formula">
       <span class="etiqueta">Evaluación probabilística <span class="tag">Δz ≤ 0</span></span>
-      <p class="mono formula-linea" id="formula-texto">
-        <span class="formula-expresion">
-          <span class="tag tag-formula">p = e<sup>Δz/q</sup></span>
-          <span class="formula-termino">p pendiente</span>
-          <span class="formula-termino">r pendiente</span>
-        </span>
-        <span class="veredicto veredicto-neutro">Esperando</span>
-      </p>
+      <div class="evaluacion">
+        <div class="eval-celda">
+          <span class="eval-etiqueta">Umbral <span class="tag tag-formula">p = e<sup>Δz/q</sup></span></span>
+          <span class="mono eval-valor" id="eval-p">—</span>
+        </div>
+        <div class="eval-celda">
+          <span class="eval-etiqueta">Sorteo <span class="tag">r</span></span>
+          <span class="mono eval-valor" id="eval-r">—</span>
+        </div>
+        <div class="eval-celda eval-celda-veredicto">
+          <span class="tag eval-comparacion">r &lt; p</span>
+          <span class="veredicto veredicto-neutro" id="eval-veredicto">Esperando</span>
+        </div>
+      </div>
     </div>
 
   </section>
@@ -75,15 +81,17 @@
 
   <aside class="panel" aria-label="Parámetros del algoritmo">
     <div class="control">
-      <label for="in-t0">Temperatura inicial <span class="tag">q</span>
-        <output class="mono" id="out-t0">1.00</output>
+      <label for="in-t0">Temp. inicial
+        <span class="control-simbolo-valor"><span class="tag">q</span>
+          <output class="mono" id="out-t0">1.00</output></span>
       </label>
       <input type="range" id="in-t0" min="0.05" max="5" step="0.05" value="1" />
     </div>
 
     <div class="control">
-      <label for="in-alfa">Enfriamiento <span class="tag">α</span>
-        <output class="mono" id="out-alfa">0.95</output>
+      <label for="in-alfa">Enfriamiento
+        <span class="control-simbolo-valor"><span class="tag">α</span>
+          <output class="mono" id="out-alfa">0.95</output></span>
       </label>
       <input type="range" id="in-alfa" min="0.9" max="0.99" step="0.01" value="0.95" />
     </div>
@@ -97,8 +105,9 @@
     </div>
 
     <div class="control">
-      <label for="in-tmax">Iteraciones <span class="tag">t<sub>máx</sub></span>
-        <output class="mono" id="out-tmax">1000</output>
+      <label for="in-tmax">Iteraciones
+        <span class="control-simbolo-valor"><span class="tag">t<sub>máx</sub></span>
+          <output class="mono" id="out-tmax">1000</output></span>
       </label>
       <input type="range" id="in-tmax" min="200" max="10000" step="100" value="1000" />
     </div>

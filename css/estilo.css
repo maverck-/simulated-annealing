@@ -90,11 +90,14 @@ body {
 
 .btn-vel {
   height: 54px;
-  min-width: 76px;
-  padding: 0 20px;
+  width: 76px;
+  flex: 0 0 76px;
+  padding: 0;
   border-radius: 999px;
   font-size: 18px;
   font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   color: var(--brasa-viva);
 }
 
@@ -237,37 +240,44 @@ body {
 
 .tag-formula { white-space: nowrap; }
 
-.formula { display: grid; gap: 6px; }
+.formula { display: grid; gap: 10px; }
 
-.formula p {
+/* Umbral → Sorteo → Veredicto: misma gramática que el resto del HUD,
+   etiqueta pequeña arriba y valor grande abajo, todo en una línea base */
+.evaluacion {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--tinta-suave);
-  min-height: 1.6em;
+  grid-template-columns: minmax(0, 1.5fr) 1fr auto;
+  gap: 14px;
+  align-items: end;
 }
 
-.formula-expresion {
+.eval-celda {
+  display: grid;
+  gap: 7px;
+  justify-items: start;
+}
+
+.eval-etiqueta {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  min-width: 0;
-}
-
-.formula-termino {
+  gap: 6px;
   white-space: nowrap;
 }
 
-.formula-comparacion {
-  color: var(--tinta);
-  font-weight: 600;
-}
+.eval-comparacion { text-transform: none; }
 
-/* Veredicto tipo tag, como en la presentación */
+.eval-valor { font-size: 18px; color: var(--tinta); }
+
+/* Celda del veredicto: ancho fijo para que Acepta/Rechaza no desplacen
+   al resto, con la comparación centrada sobre el chip */
+.eval-celda-veredicto { justify-items: center; }
+
+/* Veredicto tipo tag, como en la presentación; ancho fijo para que
+   Acepta/Rechaza no desplacen al resto al alternar */
 .veredicto {
   display: inline-block;
   font-family: var(--fuente);
@@ -278,6 +288,8 @@ body {
   border-radius: 8px;
   vertical-align: middle;
   white-space: nowrap;
+  min-width: 92px;
+  text-align: center;
 }
 
 .veredicto-si { background: rgba(159, 214, 138, 0.16); color: var(--exito); }
@@ -371,6 +383,9 @@ body {
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
+  --range-progreso: 0%;
+  --range-pista: rgba(242, 233, 221, 0.15);
+  --range-activo: linear-gradient(90deg, var(--brasa), var(--brasa-viva));
   width: 100%;
   height: 22px;
   background: transparent;
@@ -380,7 +395,14 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(242, 233, 221, 0.15);
+  background:
+    linear-gradient(
+      90deg,
+      var(--brasa) 0%,
+      var(--brasa-viva) var(--range-progreso),
+      var(--range-pista) var(--range-progreso),
+      var(--range-pista) 100%
+    );
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -397,7 +419,13 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(242, 233, 221, 0.15);
+  background: var(--range-pista);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--range-activo);
 }
 
 input[type="range"]::-moz-range-thumb {
