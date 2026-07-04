@@ -77,7 +77,7 @@ const gtx = grafico.getContext('2d');
 
 const dom = {
   tValor: $('t-valor'), gauge: $('gauge-fill'),
-  iter: $('d-iter'), altura: $('d-altura'), mejor: $('d-mejor'),
+  iter: $('d-iter'),
   formula: $('formula-texto'),
   play: $('btn-play'), iconoPlay: $('icono-play'), iconoPausa: $('icono-pausa'),
   vel: $('btn-vel'),
@@ -481,8 +481,6 @@ function actualizarHUD() {
   dom.tValor.textContent = T.toFixed(4);
   dom.gauge.style.transform = `scaleX(${clamp01(T / params.t0)})`;
   dom.iter.textContent = `${iter}/${params.tMax}`;
-  dom.altura.textContent = recortar(actual.altura, 4);
-  dom.mejor.textContent = recortar(mejor.altura, 4);
 
   if (ultimaPeor) {
     const u = ultimaPeor;

@@ -174,7 +174,7 @@ body {
   gap: 0;
 }
 
-.etiqueta, .panel h2, .hud-grid dt {
+.etiqueta, .panel h2 {
   font-family: var(--mono);
   font-size: 12px;
   text-transform: uppercase;
@@ -216,15 +216,6 @@ body {
   transform-origin: left center;
   transition: transform 120ms linear;
 }
-
-.hud-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 14px;
-}
-
-.hud-grid div { display: grid; gap: 5px; }
-.hud-grid dd { font-size: 18px; }
 
 /* Tags de símbolos, como los de las láminas del curso */
 .tag {
